@@ -1,0 +1,587 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <title>foodsaver | Expanded</title>
+  <link rel="icon" type="image/jpg" href="apple.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background:bisque;
+    color: #333;
+  }
+
+  header {
+    background:#4CAF50;
+    color:white;
+    text-align: center;
+    padding: 1.5em 0;
+  }
+  nav button {
+    background: white;
+    color: #3b9e3b;
+    border: none;
+    padding: 10px 15px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  nav button:hover {
+    background: #2e7d32;
+    color: white;
+  }
+  section {
+    display: none;
+    padding: 20px;
+    background: white;
+    margin: 15px auto;
+    max-width: 800px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  section.active { display: block; }
+
+  .food-item { padding: 10px; background:#eef5ee; margin-bottom:10px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; }
+  .status-badge { padding:5px 8px; border-radius:4px; background:#4caf50; color:white; }
+  .requested-badge { background:#ff9800; }
+  .rejected-badge { background:#f44336; }
+
+  .chart-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .chart-container canvas{
+  width: 45% !important;
+    height: 260px !important;
+  }
+  button.action-btn {
+    margin-left: 5px;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button.approve { background: #4caf50; color: white; }
+  button.reject { background: #f44336; color: white; }
+  button.edit { background:#03a9f4; color:white; }
+  button.delete { background:#f44336; color:white; }
+  input, select { padding:5px; margin:5px 0; border-radius:4px; border:1px solid #ccc; width:100%; }
+  footer {
+    background:forestgreen;
+    color:white;
+    text-align:center;
+    padding:15px 0;
+    margin-top:20px;
+  }
+  .impact-images {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+  }
+  .impact-item {
+      flex: 1 1 45%;
+      text-align: center;
+  }
+  .impact-item img {
+      width: 200%;
+      max-width: 350px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+  }
+  </style>
+  </head>
+  <body>
+
+  <header >
+
+    <h1>
+      <img src="fruits.jpg" alt="Logo" style="height:40px; vertical-align:middle; margin-right:10px;">
+      Food Saver
+    </h1>
+    <p>Reduce Food Wastage & Improve Food Security</p>
+    <button onclick="showView('home-view')">Home</button>
+      <button onclick="showView('login')">Login</button>
+     <button id="adminBtn" onclick="openDashboard('admin')" style="display:none;">Admin</button>
+     <button id="donorBtn" onclick="openDashboard('donor')" style="display:none;">Donor</button>
+     <button id="recipientBtn" onclick="openDashboard('recipient')" style="display:none;">Recipient</button>
+     <button id="analystBtn" onclick="openDashboard('analyst')" style="display:none;">Analyst</button>
+
+     <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
+    </nav>
+  </header>
+
+
+  <!-- HOME VIEW -->
+  <section id="home-view" class="view active">
+    <h2>Welcome to FoodSaver!</h2>
+    <p>Food wastage is a global issue that not only harms the environment but also wastes resources and contributes to hunger.</p>
+    
+    <h3>Impact of Food Wastage</h3>
+    <div class="impact-images">
+      <div class="impact-item"><img src="5.jpg"></div>
+      <div class="impact-item"><img src="11.jpg"></div>
+    </div>
+
+    <ul>
+      <li>1/3 of all food is wasted globally.</li>
+      <li>Food waste produces greenhouse gases.</li>
+      <li>Economic losses for producers and consumers.</li>
+      <li>Millions face food insecurity.</li>
+      <li>Disposal of food waste strains landfills and local waste management systems.</li>
+    </ul>
+
+    <h3>Solutions of Reducing Food Wastage </h3>
+    <div class="impact-images">
+      <div class="impact-item"><img src="1.jpg"></div>
+      <div class="impact-item"><img src="2.jpg"></div>
+    </div>
+
+    <ul>
+      <li>Donate surplus food.</li>
+      <li>Plan meals smartly.</li>
+      <li>Store food properly.</li>
+      <li>Avoid over-cooking.</li>
+      <li>Share extra food.</li>
+    </ul>
+  </section>
+
+  <!-- LOGIN -->
+<section id="login" class="view">
+  <h2>Login</h2>
+  <form onsubmit="login(event)">
+    <select id="role" required>
+      <option value="">Select Role</option>
+      <option value="admin">Admin</option>
+      <option value="donor">Donor</option>
+      <option value="recipient">Recipient</option>
+      <option value="analyst">Analyst</option>
+    </select>
+    <input id="username" placeholder="Username" required>
+    <input id="password" type="password" placeholder="Password" required>
+    <button>Login</button>
+  </form>
+
+   <p style="color:gray">
+    Demo Credentials:<br>
+    Admin → admin / admin123<br>
+    Donor → donor / donor123<br>
+    Recipient → recipient / recipient123<br>
+    Analyst → analyst / analyst123
+  </p>
+</section>
+
+  <!-- ADMIN VIEW -->
+  <section id="admin-view" class="view">
+    <h2>Admin Dashboard</h2>
+    <label>Filter by status:
+      <select id="admin-filter" onchange="renderAdminListings()">
+        <option value="all">All</option>
+        <option value="available">Available</option>
+        <option value="requested">Requested</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </label>
+    <div id="admin-listings"></div>
+  </section>
+
+  <!-- DONOR VIEW -->
+  <section id="donor-view" class="view">
+    <h2>Donor Listings</h2>
+    
+    <form id="donation-form">
+      <input id="food-name" placeholder="Food Name" required />
+      <input id="food-quantity" placeholder="Quantity" required />
+      <input id="expiry-date" type="date" required />
+      <button>Submit Donation</button>
+    </form>
+
+    <h3>My Listings</h3>
+    <div id="my-listings"></div>
+  </section>
+
+  <!-- RECIPIENT VIEW -->
+  <section id="recipient-view" class="view">
+    <h2>Organization Food Contribution</h2>
+    
+    <form id="recipient-form">
+      <input id="org-food-name" placeholder="Food Name" required />
+      <input id="org-food-quantity" placeholder="Quantity" required />
+      <input id="org-expiry-date" type="date" required />
+      <input id="org-name" placeholder="Organization Name" required />
+      <button>Submit Food Contribution</button>
+    </form>
+
+    <h3>Submitted Food Contributions</h3>
+    <div id="org-listings"></div>
+  </section>
+
+  <!-- ANALYST VIEW -->
+  <section id="analyst-view" class="view">
+    <h2>Analytics</h2>
+
+    <div class="chart-container">
+      <canvas id="categoryChart"></canvas>
+      <canvas id="donorTypeChart"></canvas>
+    </div>
+
+    <canvas id="trendChart" style="width:100%; height:300px; margin-top:20px;"></canvas>
+
+    <h3>Donation Table</h3>
+    <table id="donation-table" border="1" cellpadding="5" style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>Quantity</th><th>Expiry</th><th>Donor</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <footer>
+
+    <h3>FoodSaver</h3>
+    <p>@ 2025 FoodSaver | Reducing Food Wastage Together</p>
+    <p>
+    
+      Our platform connects donors, recipients, and organizations to make sure surplus food reaches those in need.  
+      Together, we can reduce food wastage, save resources, and help feed the hungry. 
+    </p>
+    <p>
+      <strong>Contact Us:</strong> info@foodsaver.org | Phone: + 0024356667  
+    </p>
+
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+
+/* ---------------- AUTH STATE ---------------- */
+let auth = {
+  loggedIn: false,
+  role: null
+};
+
+const users = {
+  admin: { pass: "admin123", view: "admin-view" },
+  donor: { pass: "donor123", view: "donor-view" },
+  recipient: { pass: "recipient123", view: "recipient-view" },
+  analyst: { pass: "analyst123", view: "analyst-view" }
+};
+
+/* ---------------- VIEW CONTROL ---------------- */
+function showView(viewId) {
+  document.querySelectorAll("section").forEach(s =>
+    s.classList.remove("active")
+  );
+  document.getElementById(viewId).classList.add("active");
+}
+
+/* ---------------- NAV ACCESS ---------------- */
+function openDashboard(role) {
+  if (!auth.loggedIn) {
+    alert("Please login first");
+    showView("login");
+    return;
+  }
+
+  if (auth.role !== role) {
+    alert("Access denied for this role");
+    return;
+  }
+
+  showView(users[role].view);
+
+  if (role === "admin") renderAdminListings();
+  if (role === "donor") renderMyListings();
+  if (role === "recipient") renderOrgListings();
+  if (role === "analyst") setTimeout(initCharts, 200);
+}
+
+/* ---------------- LOGIN ---------------- */
+function login(e) {
+  e.preventDefault();
+
+  const role = document.getElementById("role").value;
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  if (!users[username] || users[username].pass !== password || username !== role) {
+    alert("Invalid login credentials");
+    return;
+  }
+
+  auth.loggedIn = true;
+  auth.role = role;
+
+  document.getElementById("logoutBtn").style.display = "inline-block";
+  toggleNav();
+
+  showView(users[role].view);
+}
+
+/* ---------------- LOGOUT ---------------- */
+function logout() {
+  auth.loggedIn = false;
+  auth.role = null;
+
+  document.getElementById("logoutBtn").style.display = "none";
+  toggleNav();
+
+  showView("home-view");
+}
+/* ---------------- NAV VISIBILITY ---------------- */
+function toggleNav() {
+  document.getElementById("adminBtn").style.display =
+    auth.role === "admin" ? "inline-block" : "none";
+
+  document.getElementById("donorBtn").style.display =
+    auth.role === "donor" ? "inline-block" : "none";
+
+  document.getElementById("recipientBtn").style.display =
+    auth.role === "recipient" ? "inline-block" : "none";
+
+  document.getElementById("analystBtn").style.display =
+    auth.role === "analyst" ? "inline-block" : "none";
+}
+
+/* INIT */
+toggleNav()
+
+
+  /* DATA */
+  let foodDonations = [
+    { id: 1, name: 'Bread Rolls & Puff Pastries', quantity: '8 kg', expiry: '2023-10-28', donor: 'Sunrise Foods', status: 'available' },
+    { id: 2, name: 'Mixed Vegetables', quantity: '15 kg', expiry: '2023-10-29', donor: 'Green Grocer Co.', status: 'requested' },
+    { id: 3, name: 'Canned Tomatoes', quantity: '20 cans', expiry: '2024-05-01', donor: 'SuperMart', status: 'available' }
+  ];
+  let donationIdCounter = foodDonations.length + 1;
+
+  // ------------------------- VIEW SWITCHING --------------------------
+  function showView(viewName){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById(viewName).classList.add('active');
+
+    if(viewName==='admin-view') renderAdminListings();
+    if(viewName==='donor-view') renderMyListings();
+    if(viewName==='recipient-view') renderOrgListings();
+    if(viewName==='analyst-view') setTimeout(initCharts, 200);
+  }
+
+  /* RENDER FUNCTIONS */
+  function renderAdminListings() {
+    const container = document.getElementById('admin-listings');
+    container.innerHTML = "";
+    const filter = document.getElementById('admin-filter').value;
+
+    foodDonations
+      .filter(item => filter === 'all' || item.status === filter)
+      .forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'food-item';
+
+        el.innerHTML = `
+          <div>
+            <h4>${item.name}</h4>
+            <p>Qty: ${item.quantity} | Expires: ${item.expiry} | Donor: ${item.donor}</p>
+            <span class="status-badge ${item.status==='requested'?'requested-badge':''} ${item.status==='rejected'?'rejected-badge':''}">
+              ${item.status}
+            </span>
+          </div>
+          <div>
+            ${
+              item.status === 'requested' ?
+              `<button class="action-btn approve" onclick="approveRequest(${item.id})">Approve</button>
+              <button class="action-btn reject" onclick="rejectRequest(${item.id})">Reject</button>` : ''
+            }
+            <button class="action-btn edit" onclick="editDonation(${item.id})">Edit</button>
+            <button class="action-btn delete" onclick="deleteDonation(${item.id})">Delete</button>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+  }
+
+  function renderMyListings() {
+    const container = document.getElementById('my-listings');
+    container.innerHTML = "";
+
+    foodDonations.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'food-item';
+
+      el.innerHTML = `
+        <div>
+          <h4>${item.name}</h4>
+          <p>Qty: ${item.quantity} | Expires: ${item.expiry}</p>
+          <span class="status-badge ${item.status==='requested'?'requested-badge':''} ${item.status==='rejected'?'rejected-badge':''}">
+            ${item.status}
+          </span>
+        </div>
+        <div>
+          <button class="action-btn edit" onclick="editDonation(${item.id})">Edit</button>
+          <button class="action-btn delete" onclick="deleteDonation(${item.id})">Delete</button>
+        </div>
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  function renderOrgListings() {
+    const container = document.getElementById('org-listings');
+    container.innerHTML = "";
+
+    const donorImages = {
+      "Sunrise Foods": "sun.jpg",
+      "Green Grocer Co.": "green1.jpg",
+      "SuperMart": "super.jpg"
+    };
+
+    foodDonations.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'food-item';
+      
+      let imgHTML = donorImages[item.donor]
+          ? `<img src="${donorImages[item.donor]}" style="width:140px; height:140px; border-radius:25px; margin-left:50px;">`
+          : "";
+
+      el.innerHTML = `
+        <div style="flex-grow:1;">
+          <h4>${item.name}</h4>
+          <p>Qty: ${item.quantity} | Expires: ${item.expiry} | Organization: ${item.donor}</p>
+          <span class="status-badge ${item.status==='requested'?'requested-badge':''} ${item.status==='rejected'?'rejected-badge':''}">${item.status}</span>
+        </div>
+        ${imgHTML}
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  /* FORM HANDLING */
+  document.getElementById('donation-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const donation = {
+      id: donationIdCounter++,
+      name: document.getElementById('food-name').value,
+      quantity: document.getElementById('food-quantity').value,
+      expiry: document.getElementById('expiry-date').value,
+      donor: 'My Business',
+      status: 'available'
+    };
+    foodDonations.push(donation);
+    this.reset();
+    renderMyListings();
+    renderAdminListings();
+    alert('Donation listed successfully!');
+  });
+
+  document.getElementById('recipient-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const donation = {
+      id: donationIdCounter++,
+      name: document.getElementById('org-food-name').value,
+      quantity: document.getElementById('org-food-quantity').value,
+      expiry: document.getElementById('org-expiry-date').value,
+      donor: document.getElementById('org-name').value,
+      status: 'available'
+    };
+    foodDonations.push(donation);
+    this.reset();
+    renderOrgListings();
+    renderAdminListings();
+    alert('Food contribution submitted!');
+  });
+
+  /* ACTION BUTTONS */
+  function approveRequest(id) {
+    const item = foodDonations.find(d => d.id === id);
+    item.status = 'available';
+    renderAdminListings();
+    renderOrgListings();
+    renderMyListings();
+  }
+
+  function rejectRequest(id) {
+    const item = foodDonations.find(d => d.id === id);
+    item.status = 'rejected';
+    renderAdminListings();
+    renderOrgListings();
+    renderMyListings();
+  }
+
+  function editDonation(id) {
+    const item = foodDonations.find(d => d.id === id);
+    const newName = prompt("Enter food name:", item.name);
+    const newQty = prompt("Enter quantity:", item.quantity);
+    const newExp = prompt("Enter expiry date:", item.expiry);
+
+    if (newName) item.name = newName;
+    if (newQty) item.quantity = newQty;
+    if (newExp) item.expiry = newExp;
+
+    renderAdminListings();
+    renderMyListings();
+    renderOrgListings();
+  }
+
+  function deleteDonation(id) {
+    if (!confirm("Delete this donation?")) return;
+    foodDonations = foodDonations.filter(d => d.id !== id);
+    renderAdminListings();
+    renderMyListings();
+    renderOrgListings();
+  }
+
+  /* CHARTS */
+  function initCharts() {
+    new Chart(categoryChart, {
+      type: 'bar',
+      data: {
+        labels: ['Produce', 'Bakery', 'Dairy', 'Meals', 'Canned'],
+        datasets: [{ label: 'Waste (kg)', data: [450, 320, 210, 150, 120], backgroundColor: 'rgba(156,39,176,0.6)' }]
+      }
+    });
+
+    new Chart(donorTypeChart, {
+      type: 'doughnut',
+      data: {
+        labels: ['Restaurants','Grocery Stores','Farms','Caterers'],
+        datasets: [{ data: [45,30,15,10], backgroundColor: ['#FFC107','#4CAF50','#2196F3','#9C27B0'] }]
+      }
+    });
+
+    new Chart(trendChart, {
+      type: 'line',
+      data: {
+        labels: foodDonations.map(f => f.id),
+        datasets: [{
+          label: 'Donation Quantity',
+          data: foodDonations.map(f => parseInt(f.quantity) || 0),
+          borderColor: '#9c27b0',
+          tension: 0.3
+        }]
+      }
+    });
+
+    const tbody = document.querySelector('#donation-table tbody');
+    tbody.innerHTML = "";
+    foodDonations.forEach(f => {
+      const row = `<tr>
+        <td>${f.id}</td><td>${f.name}</td><td>${f.quantity}</td><td>${f.expiry}</td><td>${f.donor}</td><td>${f.status}</td>
+      </tr>`;
+      tbody.innerHTML += row;
+    });
+  }
+
+  </script>
+
+  </body>
+  </html>
+
